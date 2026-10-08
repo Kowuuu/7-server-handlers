@@ -1,0 +1,70 @@
+
+<form id="signupForm" action="/api/register" method="POST" class="form-container">
+
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="you@example.com"
+                required
+        />
+    </div>
+
+    <!-- Email Field -->
+    <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="you@example.com"
+                required
+        />
+    </div>
+
+    <!-- Password Field -->
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Minimium 8 characters"
+                minlength="8"
+                required
+        />
+    </div>
+
+    <!-- Repeat Password Field -->
+    <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Repeat your password"
+                minlength="8"
+                required
+        />
+        <span id="passwordError" class="error-text" style="display: none; color: red;">
+      Passwords do not match
+    </span>
+    </div>
+
+    <!-- Terms & Rules Checkbox -->
+    <div class="form-checkbox">
+        <input
+                type="checkbox"
+                id="agreeRules"
+                name="agreeRules"
+                required
+        />
+        <label for="agreeRules"> I agree to the website terms and rules.</label>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="submit-btn">Create Account</button>
+</form>
+

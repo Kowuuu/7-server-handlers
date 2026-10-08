@@ -1,5 +1,5 @@
-import emitter from "../events/emitter";
-import logFile from "../helpers/logHelper";
+import emitter from "../events/emitter.js";
+import logFile from "../helpers/logHelper.js";
 
 emitter.on('page:success',()=>{
     logFile("pageLoadSuccess","File is loaded");
