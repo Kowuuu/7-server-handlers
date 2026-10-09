@@ -1,8 +1,10 @@
 
 const {createUser, userExists,getUserByEmail}=require('../services/userService')
 const bcrypt =require('bcrypt');
-const {createSession}=require('../services/sessionService')
+const {createSession, deleteSession, getSession, addToCart}=require('../services/sessionService')
 const querystring = require("node:querystring");
+const {getAllProducts} = require("../services/productService");
+const {successResponse}=require('../helpers/apiResponseHelper');
 
 async function handleApiCall(req, res) {
     const urlMatch = req.url.match(/^\/api\/([\w-]+)$/);
@@ -13,7 +15,7 @@ async function handleApiCall(req, res) {
             body += chunk.toString();
         })
         req.on('end', async () => {
-            const formData= querystring.parse(body);
+            const formData= JSON.parse(body);
 
             const errors=[]
             if(!formData.name ||formData.name.length<3){
@@ -44,8 +46,7 @@ async function handleApiCall(req, res) {
             const sessionID=createSession(userId);
             res.setHeader('Set-Cookie', `sid=${sessionID}; HttpOnly; path=/`);
 
-            res.writeHead(200,{'Content-Type':'application/json'});
-            return res.end(JSON.stringify({success:true, message:"Successfully registered"}));
+            successResponse(res)
         })
         return;
     }
@@ -55,7 +56,7 @@ async function handleApiCall(req, res) {
             body += chunk.toString();
         })
         req.on('end', async () => {
-            const formData = querystring.parse(body);
+            const formData = JSON.parse(body);
             const errors=[]
             if(!formData.email || !formData.email.includes('@')){
                 errors.push("Email must be set and valid");
@@ -82,10 +83,37 @@ async function handleApiCall(req, res) {
             const sessionID=createSession(user.id);
 
             res.setHeader('Set-Cookie', `sid=${sessionID}; HttpOnly; path=/`);
-            res.writeHead(200,{'Content-Type':'application/json'});
-            return res.end(JSON.stringify({success:true, message:"Successfully logged in"}));
+            successResponse(res);
         });
         return;
+    }
+    else if (urlMatch[1]==="logout" && req.method==="GET"){
+        const user = getSession(req);
+        if(user){
+            const cookie = deleteSession(user.userId);
+            res.setHeader('Set-Cookie', cookie);
+            res.writeHead(303,{'Location':'/'});
+            return res.end();
+        }
+    }
+    else if (urlMatch[1]==="add-to-cart" && req.method==="POST"){
+        let body="";
+        req.on('data', (chunk) => {
+            body += chunk.toString();
+        })
+        req.on('end', async () => {
+            const formData = JSON.parse(body);
+            const user= getSession(req);
+            addToCart(user.userId, formData.productId);
+
+            successResponse(res);
+        });
+        return;
+    }
+    else if(urlMatch[1]==='products' && req.method==="GET"){
+        const products=await getAllProducts();
+        res.writeHead(200,{'Content-Type':'application/json'});
+        return res.end(JSON.stringify({products:products}));
     }
 
     const response={success:true}

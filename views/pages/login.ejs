@@ -26,4 +26,35 @@
 
     <!-- Submit Button -->
     <button type="submit" class="submit-btn">Log In</button>
+    <p>If you dont have a account click <a href="/register">here</a> to register</p>
 </form>
+
+<script>
+    const loginForm= document.getElementById('loginForm');
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email=loginForm.email.value;
+        const password=loginForm.password.value;
+
+        const res =await fetch('/api/login', {
+            method: 'POST',
+            headers: {'content-type': 'application/json'},
+            body: JSON.stringify({email, password})
+        });
+        if(!res.ok)throw new Error ("Failed to login");
+        const data= await res.json();
+        if(data.success){
+            window.location.reload()
+        }
+    })
+</script>
+
+
+
+
+
+
+
+
+
+

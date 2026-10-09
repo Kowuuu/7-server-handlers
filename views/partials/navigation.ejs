@@ -1,3 +1,5 @@
+
+
 <nav class="navbar">
     <div class="nav-logo"><a href="#">BrandLogo</a></div>
     <ul class="nav-links">
@@ -5,5 +7,41 @@
         <li><a href="#">About</a></li>
         <li><a href="#">Services</a></li>
         <li><a href="#">Contact</a></li>
+        <% if(user) { %>
+            <li><a href="/cart">Cart</a></li>
+            <li><span id="logoutBtn" style="color: white; cursor:pointer;" data-link="/api/logout">Logout</span></li>
+        <% }else{ %>
+            <li><a href="/login">Login</a></li>
+        <% } %>
     </ul>
 </nav>
+
+<script>
+    // === 3. LOGOUT CLICK HANDLER ===
+    // Find the logout span using its unique data attribute
+    const logoutSpan = document.getElementById("logoutBtn");
+
+    if (logoutSpan) {
+        logoutSpan.addEventListener('click', async () => {
+            // Extract the route path "/api/logout" straight from the HTML attribute
+            const url = logoutSpan.getAttribute('data-link');
+
+            try {
+                // Execute the network request using the default method (GET)
+                const res = await fetch(url);
+
+                if (!res.ok) throw new Error("Failed to clear session on server");
+
+                const data = await res.json();
+
+                // If the server confirms log out success, send them to the login page
+                if (data.success) {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error("Logout fetch error:", error.message);
+            }
+        });
+    }
+
+</script>

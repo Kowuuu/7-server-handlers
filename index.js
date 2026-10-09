@@ -8,14 +8,10 @@ const {handleApiCall} = require('./src/handlers/apiHandler')
 const {handlePage} = require('./src/handlers/pageHandler')
 require('./src/listeners/pageListener')
 const {pool} = require('./src/services/mysql');
-const {fetchSingleProduct, getAllProducts} =require('./src/services/productService');
-const {session, createSession,getSession} = require('./src/services/sessionService');
-
+const {fetchSingleProduct, getAllProducts, getProductsById} =require('./src/services/productService');
+const {getSession} = require("./src/services/sessionService");
 
 const server = http.createServer(async (req, res) => {
-
-    const userSession=await getSession(req);
-
     //sve sto ide u /public/ ide u staticHandler
     if (req.url.startsWith('/public/')) {
         handleStaticFiles(req, res);
@@ -25,8 +21,7 @@ const server = http.createServer(async (req, res) => {
         return;
     }
     if (req.url === '/') {
-        const products = await getAllProducts();
-         handlePage("home",{user: userSession,products:products},req, res);
+         handlePage("home",{},req, res);
         return;
     } else if (req.url === '/about') {
         handlePage("about",{},req, res);
@@ -36,6 +31,12 @@ const server = http.createServer(async (req, res) => {
         return;
     }else if(req.url === '/login'){
         handlePage("login",{},req, res);
+        return;
+    }else if(req.url === '/cart'){
+        const user=getSession(req);
+        const products = await getProductsById(user.shoppingCart);
+
+        handlePage("cart",{products:products },req, res);
         return;
     }
 
