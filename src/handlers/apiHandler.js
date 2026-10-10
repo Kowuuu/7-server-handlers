@@ -93,6 +93,7 @@ async function handleApiCall(req, res) {
             const cookie = deleteSession(user.userId);
             res.setHeader('Set-Cookie', cookie);
             res.writeHead(303,{'Location':'/'});
+
             return res.end();
         }
     }

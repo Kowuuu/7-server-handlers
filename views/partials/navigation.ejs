@@ -24,11 +24,14 @@
     if (logoutSpan) {
         logoutSpan.addEventListener('click', async () => {
             // Extract the route path "/api/logout" straight from the HTML attribute
-            const url = logoutSpan.getAttribute('data-link');
+            const url = logoutSpan.dataset.link; //getAttribute('data-link')
 
             try {
                 // Execute the network request using the default method (GET)
-                const res = await fetch(url);
+                const res = await fetch(url,{
+                    method: "GET",
+                    credentials: 'include',
+                });
 
                 if (!res.ok) throw new Error("Failed to clear session on server");
 

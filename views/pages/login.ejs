@@ -39,7 +39,8 @@
         const res =await fetch('/api/login', {
             method: 'POST',
             headers: {'content-type': 'application/json'},
-            body: JSON.stringify({email, password})
+            body: JSON.stringify({email, password}),
+            credentials: 'include'
         });
         if(!res.ok)throw new Error ("Failed to login");
         const data= await res.json();
